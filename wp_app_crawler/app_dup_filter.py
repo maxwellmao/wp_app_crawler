@@ -7,7 +7,11 @@ class AppURLFilter(RFPDupeFilter):
     def __getid__(self, url):
         url_piece=url.split('/')
         if len(url_piece)>6 and url_piece[4]=='store' and url_piece[5]=='app':
-            return '/'.join(url_piece[4:])
+            if url_piece[3]=='en-us':
+                self.fingerprints.add('/'.join(url_piece[4:]))
+                return url
+            else:
+                return '/'.join(url_piece[4:])
         return url
     
     def request_seen(self, request):
