@@ -9,12 +9,23 @@ class WPAppSpider(CrawlSpider):
     name='wp_app'
     allowed_domains=['www.windowsphone.com']
     start_urls=[
-            'http://www.windowsphone.com/en-us/store/featured-apps',
-            'http://www.windowsphone.com/en-us/store/featured-games'
+#            'http://www.windowsphone.com/en-us/store/featured-apps',
+#            'http://www.windowsphone.com/en-us/store/featured-games'
+        'http://www.windowsphone.com/en-us/markets'
     ]
 
-
     def parse(self, response):
+        '''
+            parse the link to markets of different countries
+        '''
+        print '[Parse Markets]', response.url
+        for market in response.xpath('//div[@id="markets"]/table[@id="marketsTable"]/tbody/tr/td/a/@href'):
+            market_link=market.extract()
+            yield Request(market_link+'/store/featured-apps', callback=self.parseMarket)
+            yield Request(market_link+'/store/featured-games', callback=self.parseMarket)
+
+
+    def parseMarket(self, response):
         '''
             parsing the total categories of app store
         '''
